@@ -111,9 +111,7 @@ fun sumMetrics(metrics) =
 		(azuredevopsBoardsMetrics: azuredevopsBoardsMetrics) if(!isEmpty(azureDevOpsBoardsData)),
     	(azureDevopsReposMetrics: azureDevopsReposMetrics)if(!isEmpty(azureDevOpsReposData)),
 		(azureDevopsPipelinesMetrics: azureDevopsPipelinesMetrics)if(!isEmpty(azureDevOpsPipelinesData)),
-        (splunkMetrics: {
-			totalDashboards: splunkData
-		}) if(!isEmpty(splunkData)),
+        (splunkMetrics: {totalDashboards: splunkData}) if(!isEmpty(splunkData)),
 		 errors: vars.errors
 	} filterObject (!isEmpty($))
 }
