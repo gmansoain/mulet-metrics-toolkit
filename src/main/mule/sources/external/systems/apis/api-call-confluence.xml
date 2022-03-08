@@ -21,6 +21,13 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 		<choice doc:name="Choice" doc:id="78af6f64-2c66-4b6e-a46e-b523c29fb70c" >
 			<when expression="#[vars.counter &gt; 0]">
 				<http:request method="GET" doc:name="GET Pages" doc:id="84b25210-bc74-4193-967a-c39c8de3a97c" config-ref="HTTP_Confluence_Request_Config" path="#[vars.path]" responseTimeout="30000">
+					<http:query-params ><![CDATA[#[{
+	next: true,
+	limit: p('sdlc.confluence.limit'),
+	cql:"type=page and space='" ++ p('sdlc.confluence.space') ++ "'",
+	expand: "version,history,history.lastUpdated",
+	jq: "'.totalSize'"
+}]]]></http:query-params>
 		</http:request>
 				<ee:transform doc:name="Aggregate Output" doc:id="e2a6607c-5628-4339-a705-ea428382f350">
 					<ee:message>
@@ -32,7 +39,7 @@ output application/json
 vars.outputPayload default [] ++ payload.results]]></ee:set-variable>
 					</ee:variables>
 				</ee:transform>
-				<set-variable value="#[output application/java --- if(payload.size == payload.limit) 0 else vars.counter]" doc:name="Update Counter" doc:id="873c8284-6c10-4883-b898-00f920b3f235" variableName="counter"/>
+				<set-variable value='#[if(payload."_links".next != null) 1  else 0]' doc:name="Update Counter" doc:id="873c8284-6c10-4883-b898-00f920b3f235" variableName="counter"/>
 				<set-variable value='#[payload."_links".context ++ payload."_links".next default ""]' doc:name="Update Path" doc:id="745cb63f-70e1-4e70-8f07-e1aea35471c6" variableName="path"/>
 				<flow-ref doc:name="recursive-call-confluence-apps-flow" doc:id="348a0675-bb03-47c4-aa84-67fc48b2b695" name="recursive-call-confluence-apps-flow"/>
 			</when>

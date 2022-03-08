@@ -5,7 +5,9 @@ var confluenceData = payload[1].payload
 var jenkinsData = payload[2].payload
 var jiraData = payload[3].payload
 var splunkData = payload[4].payload
-var azureDevOpsData = payload[5].payload
+var azureDevOpsBoardsData = payload[5]
+var azureDevOpsReposData = payload[6].payload 
+var azureDevOpsPipelinesData = payload[7].payload
 ---
 {
 	date: vars.date,
@@ -15,7 +17,9 @@ var azureDevOpsData = payload[5].payload
 		jenkinsData: jenkinsData,
 		jiraData: jiraData,
 		splunkData: splunkData,
-		azureDevOpsData: azureDevOpsData,
+		azureDevOpsBoardsData: azureDevOpsBoardsData,
+		azureDevOpsReposData: azureDevOpsReposData,
+		azureDevOpsPipelinesData: azureDevOpsPipelinesData,
 		errors: vars.errors	
 		}	filterObject (!isEmpty($))
 }

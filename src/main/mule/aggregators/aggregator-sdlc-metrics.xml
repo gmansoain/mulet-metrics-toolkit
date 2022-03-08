@@ -26,9 +26,15 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 			<route>
 				<flow-ref doc:name="Splunk Metrics Flow Reference" doc:id="d27ee5f5-d6a3-4d16-bc9c-c3d22befbdc9" name="collector-splunk-metrics-flow" />
 			</route>
-			<route >
-				<flow-ref doc:name="Azure DevOps Metrics Flow Reference" doc:id="5e8ce2e6-9200-4eea-8690-3ef3683940e0" name="collector-azuredevops-metrics-flow"/>
-			</route>
+			<route>
+	        	<flow-ref doc:name="AzureDevOps Boards Metrics Flow Reference" doc:id="8521b857-19a7-4ee2-8a5b-d1043f13cba8" name="collector-azuredevops-boards-metrics-flow"/>
+	      	</route>
+		    <route>
+		    	<flow-ref doc:name="AzureDevOps Repos Metrics Flow Reference" doc:id="d297576f-f7ca-4255-830c-a50af19920b3" name="collector-azuredevops-repos-metrics-flow"/>
+		    </route>
+		    <route>
+		      <flow-ref doc:name="AzureDevOps Pipelines Metrics Flow Reference" doc:id="aa90afa2-ddb5-43c7-8a12-b22e8879f150" name="collector-azuredevops-pipelines-metrics-flow"/>
+		    </route>
 		</scatter-gather>
 		<choice doc:name="Choice" doc:id="75ce7330-61e0-41b6-93bc-e23a95b7a015" >
 			<when expression="#[vars.rawData]" >

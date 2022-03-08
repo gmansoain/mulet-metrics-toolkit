@@ -2,5 +2,5 @@
 output application/json
 ---
 {
-  "query": "Select [System.Id], [System.Title], [System.State], [System.WorkItemType] From WorkItems Where [System.IterationPath] = @project"
+  "query": "Select [System.Id] From WorkItems Where [Team Project] = @Project"
 }

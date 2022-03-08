@@ -3,55 +3,117 @@ output application/json
 var bitbucketData = payload[0].payload default []
 var confluenceData = payload[1].payload default []
 var jenkinsData = payload[2].payload default []
-var jiraData = payload[3].payload[0].payload default []
-var jiraBacklogData = payload[3].payload[1].payload default []
+var jiraData = payload[3].payload default []
 var splunkData = payload[4].payload default []
-var azureDevOpsBacklogData = payload[5].payload[0].payload default []
-var azureDevOpsSprintData = payload[5].payload[1].payload default []
-var azureDevOpsBuildData = payload[5].payload[2].payload default []
-var azureDevOpsRepoData = payload[5].payload[3].payload default []
+var azureDevOpsBoardsData = payload[5]
+var azureDevOpsReposData = payload[6].payload default []
+var azureDevOpsPipelinesData = payload[7].payload default []
+
+var bitBucketMetrics = {totalRepositories: bitbucketData.size default 0}
+
+var confluenceMetrics = {
+			totalPages: confluenceData.size default 0,
+			totalPagesCreatedInLast30Days : sizeOf(confluenceData.results filter ($.history.createdDate as String {format: "yyyy-MM-dd'T'HH:mm:ss.SSS"} as Date) > now() - |P30D|) default 0,
+			totalPagesUpdatedInLast30Days : sizeOf(confluenceData.results filter ($.history.lastUpdated.when as String {format: "yyyy-MM-dd'T'HH:mm:ss.SSS"} as Date) > now() - |P30D|) default 0,
+			topContributorsInLast30Days : ((confluenceData.results filter ($.history.lastUpdated.when as String {format: "yyyy-MM-dd'T'HH:mm:ss.SSS"} as Date) >now() - |P30D| and $.history.lastUpdated.by.publicName != null
+    groupBy $.history.lastUpdated.by.publicName) mapObject {
+        ($$): sizeOf($)
+    } orderBy(-$)) default null
+		}
+var jenkinsMetrics = {
+			totalJobs : sizeOf(jenkinsData.jobs)  default 0,
+			totalSuccessfulJobs : sizeOf(jenkinsData.jobs filter $.color == "blue")  default 0,     
+            totalFailedJobs : sizeOf(jenkinsData.jobs filter $.color == "red") default 0,
+			totalUnexecutedJobs : sizeOf(jenkinsData.jobs filter $.color == null)  default 0
+		}
+
+var jiraMetrics = {
+			workItemsInBacklog: jiraData[1].payload.total default null,
+    		workItemsInSprint : jiraData[0].payload.total,
+    		workItemsInSprintByType : (jiraData[0].payload.issues groupBy $.fields.issuetype.name) mapObject  {($$) : sizeOf($)} default null,
+    		workItemsInSprintByStatus : (jiraData[0].payload.issues groupBy $.fields.status.name) mapObject  {($$) : sizeOf($)} default null
+		}
+
+var azuredevopsBoardsMetrics = { 
+			workItemsInBacklog: sizeOf(azureDevOpsBoardsData.payload[0].payload) default 0,
+    		workItemsInSprint : sizeOf(azureDevOpsBoardsData.payload[1].payload) default 0,
+    		workItemsInSprintByType : (azureDevOpsBoardsData.payload[1].payload groupBy $.taskType ) mapObject  {($$) : sizeOf($)} default null, 	//may not be able to normalise types 
+    		workItemsInSprintByStatus : (azureDevOpsBoardsData.payload[1].payload groupBy $.status) mapObject  {($$) : sizeOf($)} default null //may not be able to normalise status - may not want to? 
+    	}
+
+var azureDevopsReposMetrics = {
+    		totalRepositories: azureDevOpsReposData.size
+    		//commits - can filter by date, require a call per repo though 
+    		//pull requests - can filter by status (active, abandoned, complete), but not date - can get all for a project 
+    		//should likely implement pagination 
+    	}
+
+var azureDevopsPipelinesMetrics = {
+    totalJobs: sizeOf(azureDevOpsPipelinesData) default 0,
+    totalSuccessfulJobs: sizeOf(azureDevOpsPipelinesData filter() -> $.result == "succeeded") default 0,
+    totalFailedJobs: sizeOf(azureDevOpsPipelinesData filter() -> $.result == "failed") default 0,
+    totalUnexecutedJobs: sizeOf(azureDevOpsPipelinesData filter() -> $.result == "no runs") default 0
+}
+
+fun sumMetrics(metrics) = 
+    sum(metrics filter(typeOf($) == Number)) default 0
+
 ---
 {
 	date: vars.date,
 	sdlcMetrics: {
-		bitBucketMetrics: if(vars.sdlcDetails.bitbucket.enabled == "true") {
-			totalRepositories: bitbucketData.size default null
-		} else {
+        //summary view with normalised field names - values being a sum of various system specifics - potentially nest under a summary/overview node
+		documentation: {
+			totalPages: confluenceMetrics.totalPages default 0, //+ any other data source
+			pagesCreatedInLast30Days: confluenceMetrics.totalPagesCreatedInLast30Days default 0,
+			pagesUpdatedInLast30Days: confluenceMetrics.totalPagesUpdatedInLast30Days default 0,
+			topContributorsInLast30Days: confluenceMetrics.topContributorsInLast30Days default {}
 		},
-		confluenceMetrics: if(vars.sdlcDetails.confluence.enabled == "true") {
-			totalPages: confluenceData.size default null,
-			totalPagesCreatedInLast30Days : sizeOf(confluenceData.results filter ($.history.createdDate as String {format: "yyyy-MM-dd'T'HH:mm:ss.SSS"} as Date) > now() - |P30D|) default null,
-			totalPagesUpdatedInLast30Days : sizeOf(confluenceData.results filter ($.history.lastUpdated.when as String {format: "yyyy-MM-dd'T'HH:mm:ss.SSS"} as Date) > now() - |P30D|) default null,
-			topContributorsInLast30Days : ((confluenceData.results filter ($.history.createdDate as String {format: "yyyy-MM-dd'T'HH:mm:ss.SSS"} as Date) > now() - |P30D| groupBy $.history.createdBy.publicName) mapObject {
-				($$) : sizeOf($)
-			} orderBy (-$)) default null
-		} else {},
-		jenkinsMetrics: if(vars.sdlcDetails.jenkins.enabled == "true") {
-			totalJobs : sizeOf(jenkinsData.jobs)  default null,
-			totalFailedJobs : sizeOf(jenkinsData.jobs filter $.color == "red") default null,
-			totalSuccessJobs : sizeOf(jenkinsData.jobs filter $.color == "blue")  default null,
-			totalUnexecutedJobs : sizeOf(jenkinsData.jobs filter $.color == "notbuilt")  default null
-		} else {},
-		jiraMetrics: if(vars.sdlcDetails.jira.enabled == "true") {
-			totalJiraTasksInBacklog: jiraBacklogData.total default null,
-    		totalJiraTasksInSprint : jiraData.total,
-    		totalJiraTasksByType : (jiraData.issues groupBy $.fields.issuetype.name) mapObject  {($$) : sizeOf($)} default null,
-    		totalJiraTasksByStatus : (jiraData.issues groupBy $.fields.status.name) mapObject  {($$) : sizeOf($)} default null
-		} else {},
-		splunkMetrics: if(vars.sdlcDetails.splunk.enabled == "true") {
+		codeRepositories: { //added "code" in case we wish to add artifact repos in future
+			totalRepositories: sumMetrics([bitBucketMetrics.totalRepositories, azureDevopsReposMetrics.totalRepositories])
+			//number of commits in last 30 days 
+			//number of PRs merged, rejected, open, closed in last 30 days etc. 
+			//active contributors? 
+		},
+		buildJobs: {
+			totalJobs: sumMetrics([jenkinsMetrics.totalJobs,azureDevopsPipelinesMetrics.totalJobs]),
+			totalSuccessfulJobs: sumMetrics([jenkinsMetrics.totalSuccessfulJobs, azureDevopsPipelinesMetrics.totalSuccessfulJobs]),
+			totalFailedJobs: sumMetrics([jenkinsMetrics.totalFailedJobs, azureDevopsPipelinesMetrics.totalFailedJobs]),
+			totalUnexecutedJobs: sumMetrics([jenkinsMetrics.totalUnexecutedJobs, azureDevopsPipelinesMetrics.totalUnexecutedJobs]) 
+		},
+		
+		workItems: {
+			workItemsInBacklog: sumMetrics(
+                [jiraMetrics.workItemsInBacklog, 
+                azuredevopsBoardsMetrics.workItemsInBacklog]),
+			workItemsInSprint: sumMetrics([jiraMetrics.workItemsInSprint,
+                azuredevopsBoardsMetrics.workItemsInSprint]), 
+			workItemsInSprintByType: {  //there must be a better way of doing this 
+                Task: sumMetrics([jiraMetrics.workItemsInSprintByType.Task, azuredevopsBoardsMetrics.workItemsInSprintByType.Task]),
+                Bug: sumMetrics([jiraMetrics.workItemsInSprintByType.Bug, azuredevopsBoardsMetrics.workItemsInSprintByType.Bug]),
+                Epic: sumMetrics([jiraMetrics.workItemsInSprintByType.Epic, azuredevopsBoardsMetrics.workItemsInSprintByType.Epic]),
+                Issue: sumMetrics([jiraMetrics.workItemsInSprintByType.Issue, azuredevopsBoardsMetrics.workItemsInSprintByType.Issue]),
+                Story: sumMetrics([jiraMetrics.workItemsInSprintByType.Story, azuredevopsBoardsMetrics.workItemsInSprintByType.Story])
+            },	
+			workItemsInSprintByStatus: {
+                "In Progress": sumMetrics([jiraMetrics.workItemsInSprintByStatus."In Progress", azuredevopsBoardsMetrics.workItemsInSprintByStatus."Doing"]),
+                "To Do": sumMetrics([jiraMetrics.workItemsInSprintByStatus."To Do", azuredevopsBoardsMetrics.workItemsInSprintByStatus."To Do"]),
+                "Done": sumMetrics([jiraMetrics.workItemsInSprintByStatus."Done", azuredevopsBoardsMetrics.workItemsInSprintByStatus."Done"])
+            } //as above 
+			
+		},
+
+        //system specific
+		(bitBucketMetrics:  bitBucketMetrics) if (!isEmpty(bitbucketData)),
+		(confluenceMetrics: confluenceMetrics) if(!isEmpty(confluenceData)),
+		(jenkinsMetrics: jenkinsMetrics) if(!isEmpty(jenkinsData)),        
+		(jiraMetrics: jiraMetrics) if(!isEmpty(jiraData)),
+		(azuredevopsBoardsMetrics: azuredevopsBoardsMetrics) if(!isEmpty(azureDevOpsBoardsData)),
+    	(azureDevopsReposMetrics: azureDevopsReposMetrics)if(!isEmpty(azureDevOpsReposData)),
+		(azureDevopsPipelinesMetrics: azureDevopsPipelinesMetrics)if(!isEmpty(azureDevOpsPipelinesData)),
+        (splunkMetrics: {
 			totalDashboards: splunkData
-		} else {},
-		azuredevopsMetrics: if(vars.sdlcDetails.azuredevops.enabled == "true") {
-			totalTasksInBacklog: sizeOf(azureDevOpsBacklogData) default null,
-    		totalTasksInSprint : sizeOf(azureDevOpsSprintData) default null,
-    		totalTasksByType : (azureDevOpsSprintData groupBy $.taskType) mapObject  {($$) : sizeOf($)} default null,
-    		totalTasksByStatus : (azureDevOpsSprintData groupBy $.status) mapObject  {($$) : sizeOf($)} default null,
-            totalRepositories: azureDevOpsRepoData.size,
-            totalJobs: sizeOf(azureDevOpsBuildData),
-            totalFailedJobs: sizeOf(azureDevOpsBuildData filter() -> $.result == "failed"),
-            totalSuccessJobs: sizeOf(azureDevOpsBuildData filter() -> $.result == "succeeded"),
-            totalUnexecutedJobs: sizeOf(azureDevOpsBuildData filter() -> $.result == "no runs")
-		} else {},
-		errors: vars.errors
+		}) if(!isEmpty(splunkData)),
+		 errors: vars.errors
 	} filterObject (!isEmpty($))
 }

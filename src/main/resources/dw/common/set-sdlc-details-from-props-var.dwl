@@ -18,7 +18,15 @@ output application/java
 		enabled: p('sdlc.splunk.enabled')
 	},
 	azuredevops: {
-		enabled: p('sdlc.azuredevops.enabled')
+		repos: {
+			enabled: p('sdlc.azuredevops.repos.enabled')
+		},
+		pipelines: {
+			enabled: p('sdlc.azuredevops.pipelines.enabled')
+		},
+		boards:{
+			enabled: p('sdlc.azuredevops.boards.enabled')
+		}
 	}
 	
 }
