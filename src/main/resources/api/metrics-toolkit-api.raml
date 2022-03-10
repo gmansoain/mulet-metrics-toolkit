@@ -13,6 +13,7 @@ traits:
   allowFilterByCollector: !include traits/collectors.raml
   allowRawDataOtput: !include traits/raw.raml
   allowFilterByBusinessMetrics: !include traits/business-metrics.raml
+  allowFilterBySDLCDataSource: !include traits/sdlc-sources.raml
   receiveAnypointOrgId: !include traits/x-anypnt-org-id.raml
   receiveConnectedApp: !include traits/connected-app-auth.raml
   receivePlatformUser: !include traits/platform-auth.raml
@@ -103,6 +104,7 @@ types:
   get:
     is:
       - allowRawDataOtput
+      - allowFilterBySDLCDataSource
     displayName: SDLC Metrics
     description: This resource allows to collect metrics for the available SDLC platforms.  
     responses:
@@ -115,9 +117,7 @@ types:
     description: This resource allows to load SDLC metrics using one of the available strategies.
     post:
       is: # If using the Anypoint Monitoring loader.
-        - receiveAnypointOrgId
-        - receiveConnectedApp
-        - receivePlatformUser
+       - allowFilterBySDLCDataSource
       displayName: SDLC Metrics Loader
       description: This endpoint allows to load SDLC metrics using one of the available strategies.  
       responses:

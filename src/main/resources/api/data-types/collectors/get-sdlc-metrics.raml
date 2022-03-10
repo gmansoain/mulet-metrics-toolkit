@@ -7,12 +7,14 @@ properties:
   sdlcMetrics: 
     type: object
     properties:
-      bitBucketMetrics: 
-        type: object
+
+
+      # System Specific
+      bitBucketMetrics?: 
         properties:
           totalRepositories:
             type: integer  
-      confluenceMetrics: 
+      confluenceMetrics?: 
         type: object
         properties:
           totalPages:
@@ -23,44 +25,54 @@ properties:
             type: integer
           topContributorsInLast30Days: 
             type: object        
-      jenkinsMetrics: 
-        type: object
+      jenkinsMetrics?: 
         properties:
           totalJobs?:
-            type: string
-            required: false
-          totalFailedJobs?:
-            type: string 
-            required: false 
+            type: integer
           totalSuccessJobs?:
             type: integer 
-            required: false 
+          totalFailedJobs?:
+            type: integer 
           totalUnexecutedJobs?:
             type: integer 
-            required: false
-      jiraMetrics: 
-        type: object
+      jiraMetrics?: 
         properties:
-          totalJiraTasksInBacklog:
+          workItemsInBacklog:
             type: integer
-          totalJiraTasksInSprint:
+          workItemsInSprint:
             type: integer  
-          totalJiraTasksByType: 
+          workItemsInSprintByType: 
             type: object
-            properties:
-              Task:
-                type: integer
-              Sub-task:
-                type: integer
-          totalJiraTasksByStatus?:
-            type: string
-            required: false
-      splunkMetrics: 
-        type: object
+          workItemsInSprintByStatus:
+            type: object
+      splunkMetrics?: 
         properties:
           totalDashboards:
-            type: array
-            items: string
+            type: integer
+      azuredevopsBoardsMetrics?:
+        properties: 
+          workItemsInBacklog:
+            type: integer
+          workItemsInSprint:
+            type: integer  
+          workItemsInSprintByType: 
+            type: object
+          workItemsInSprintByStatus:
+            type: object
+      azureDevopsReposMetrics?:
+        properties:
+          totalRepositories:
+            type: integer  
+      azureDevopsPipelinesMetrics?:
+        properties:
+          totalJobs?:
+            type: integer
+          totalSuccessJobs?:
+            type: integer 
+          totalFailedJobs?:
+            type: integer 
+          totalUnexecutedJobs?:
+            type: integer 
 example: !include ../../examples/collectors/responses/get-sdlc-metrics.json
     
   

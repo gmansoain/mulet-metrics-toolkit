@@ -1,36 +1,92 @@
 {
-  "date": "2021-02-21T00:17:54.598-08:00",
-  "sdlcMetrics": {
-    "bitBucketMetrics": {
-      "totalRepositories": 1
-    },
-    "confluenceMetrics": {
-      "totalPages": 0,
-      "totalPagesCreatedInLast30Days": 0,
-      "totalPagesUpdatedInLast30Days": 0,
-      "topContributorsInLast30Days": {
-        
-      }
-    },
-    "jenkinsMetrics": {
-      "totalJobs": null,
-      "totalFailedJobs": null,
-      "totalSuccessJobs": null,
-      "totalUnexecutedJobs": null
-    },
-    "jiraMetrics": {
-      "totalJiraTasksInBacklog": 6,
-      "totalJiraTasksInSprint": 6,
-      "totalJiraTasksByType": {
-        "Task": 1,
-        "Sub-task": 1
-      },
-      "totalJiraTasksByStatus": null
-    },
-    "splunkMetrics": {
-      "totalDashboards": [
-        
-      ]
+    "date": "2022-03-08T10:00:38.28Z",
+    "sdlcMetrics": {
+        "documentation": {
+            "totalPages": 4,
+            "pagesCreatedInLast30Days": 4,
+            "pagesUpdatedInLast30Days": 4,
+            "topContributorsInLast30Days": {
+                "Max Muley": 3
+            }
+        },
+        "codeRepositories": {
+            "totalRepositories": 10
+        },
+        "buildJobs": {
+            "totalJobs": 15,
+            "totalSuccessfulJobs": 10,
+            "totalFailedJobs": 1,
+            "totalUnexecutedJobs": 4
+        },
+        "workItems": {
+            "workItemsInBacklog": 16,
+            "workItemsInSprint": 7,
+            "workItemsInSprintByType": {
+                "Task": 3,
+                "Bug": 1,
+                "Epic": 0,
+                "Issue": 1,
+                "Story": 2
+            },
+            "workItemsInSprintByStatus": {
+                "In Progress": 1,
+                "To Do": 5,
+                "Done": 1
+            }
+        },
+        "bitBucketMetrics": {
+            "totalRepositories": 2
+        },
+        "confluenceMetrics": {
+            "totalPages": 4,
+            "totalPagesCreatedInLast30Days": 4,
+            "totalPagesUpdatedInLast30Days": 4,
+            "topContributorsInLast30Days": {
+                "Max Muley": 3
+            }
+        },
+        "jenkinsMetrics": {
+            "totalJobs": 4,
+            "totalSuccessfulJobs": 1,
+            "totalFailedJobs": 1,
+            "totalUnexecutedJobs": 2
+        },
+        "jiraMetrics": {
+            "workItemsInBacklog": 2,
+            "workItemsInSprint": 5,
+            "workItemsInSprintByType": {
+                "Bug": 1,
+                "Task": 2,
+                "Story": 2
+            },
+            "workItemsInSprintByStatus": {
+                "To Do": 3,
+                "In Progress": 1,
+                "Done": 1
+            }
+        },
+        "azuredevopsBoardsMetrics": {
+            "workItemsInBacklog": 14,
+            "workItemsInSprint": 2,
+            "workItemsInSprintByType": {
+                "Issue": 1,
+                "Task": 1
+            },
+            "workItemsInSprintByStatus": {
+                "To Do": 2
+            }
+        },
+        "azureDevopsReposMetrics": {
+            "totalRepositories": 8
+        },
+        "azureDevopsPipelinesMetrics": {
+            "totalJobs": 11,
+            "totalSuccessfulJobs": 9,
+            "totalFailedJobs": 0,
+            "totalUnexecutedJobs": 2
+        },
+        "splunkMetrics": {
+            "totalDashboards": 4
+        }
     }
-  }
 }

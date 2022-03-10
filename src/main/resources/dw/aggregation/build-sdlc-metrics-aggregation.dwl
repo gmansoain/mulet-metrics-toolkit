@@ -43,9 +43,6 @@ var azuredevopsBoardsMetrics = {
 
 var azureDevopsReposMetrics = {
     		totalRepositories: azureDevOpsReposData.size
-    		//commits - can filter by date, require a call per repo though 
-    		//pull requests - can filter by status (active, abandoned, complete), but not date - can get all for a project 
-    		//should likely implement pagination 
     	}
 
 var azureDevopsPipelinesMetrics = {
@@ -62,18 +59,15 @@ fun sumMetrics(metrics) =
 {
 	date: vars.date,
 	sdlcMetrics: {
-        //summary view with normalised field names - values being a sum of various system specifics - potentially nest under a summary/overview node
+        //summary view with normalised field names - values being a sum of various system specifics
 		documentation: {
 			totalPages: confluenceMetrics.totalPages default 0, //+ any other data source
 			pagesCreatedInLast30Days: confluenceMetrics.totalPagesCreatedInLast30Days default 0,
 			pagesUpdatedInLast30Days: confluenceMetrics.totalPagesUpdatedInLast30Days default 0,
 			topContributorsInLast30Days: confluenceMetrics.topContributorsInLast30Days default {}
 		},
-		codeRepositories: { //added "code" in case we wish to add artifact repos in future
+		codeRepositories: {
 			totalRepositories: sumMetrics([bitBucketMetrics.totalRepositories, azureDevopsReposMetrics.totalRepositories])
-			//number of commits in last 30 days 
-			//number of PRs merged, rejected, open, closed in last 30 days etc. 
-			//active contributors? 
 		},
 		buildJobs: {
 			totalJobs: sumMetrics([jenkinsMetrics.totalJobs,azureDevopsPipelinesMetrics.totalJobs]),
@@ -88,7 +82,7 @@ fun sumMetrics(metrics) =
                 azuredevopsBoardsMetrics.workItemsInBacklog]),
 			workItemsInSprint: sumMetrics([jiraMetrics.workItemsInSprint,
                 azuredevopsBoardsMetrics.workItemsInSprint]), 
-			workItemsInSprintByType: {  //there must be a better way of doing this 
+			workItemsInSprintByType: { 
                 Task: sumMetrics([jiraMetrics.workItemsInSprintByType.Task, azuredevopsBoardsMetrics.workItemsInSprintByType.Task]),
                 Bug: sumMetrics([jiraMetrics.workItemsInSprintByType.Bug, azuredevopsBoardsMetrics.workItemsInSprintByType.Bug]),
                 Epic: sumMetrics([jiraMetrics.workItemsInSprintByType.Epic, azuredevopsBoardsMetrics.workItemsInSprintByType.Epic]),
@@ -99,7 +93,7 @@ fun sumMetrics(metrics) =
                 "In Progress": sumMetrics([jiraMetrics.workItemsInSprintByStatus."In Progress", azuredevopsBoardsMetrics.workItemsInSprintByStatus."Doing"]),
                 "To Do": sumMetrics([jiraMetrics.workItemsInSprintByStatus."To Do", azuredevopsBoardsMetrics.workItemsInSprintByStatus."To Do"]),
                 "Done": sumMetrics([jiraMetrics.workItemsInSprintByStatus."Done", azuredevopsBoardsMetrics.workItemsInSprintByStatus."Done"])
-            } //as above 
+            }  
 			
 		},
 
@@ -108,7 +102,7 @@ fun sumMetrics(metrics) =
 		(confluenceMetrics: confluenceMetrics) if(!isEmpty(confluenceData)),
 		(jenkinsMetrics: jenkinsMetrics) if(!isEmpty(jenkinsData)),        
 		(jiraMetrics: jiraMetrics) if(!isEmpty(jiraData)),
-		(azuredevopsBoardsMetrics: azuredevopsBoardsMetrics) if(!isEmpty(azureDevOpsBoardsData)),
+		(azuredevopsBoardsMetrics: azuredevopsBoardsMetrics) if(!isEmpty(azureDevOpsBoardsData.payload)),
     	(azureDevopsReposMetrics: azureDevopsReposMetrics)if(!isEmpty(azureDevOpsReposData)),
 		(azureDevopsPipelinesMetrics: azureDevopsPipelinesMetrics)if(!isEmpty(azureDevOpsPipelinesData)),
         (splunkMetrics: {totalDashboards: splunkData}) if(!isEmpty(splunkData)),

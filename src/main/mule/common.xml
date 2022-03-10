@@ -89,12 +89,21 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 	<flow name="common-set-benefits-vars-from-payload" doc:id="83ccc2e8-dfbe-4c8c-9095-a26e42c30991">
 		<set-variable value="#[payload.event]" doc:name="Set Benefits Inputs from Payload" doc:id="9d432a1e-41f6-422b-9896-6f5c009aec2b" variableName="benefitsInputs"/>
 	</flow>
-	<flow name="common-set-sdlc-details" doc:id="9ff8b920-58f8-4708-968c-06d10145178a" >
+	<flow name="common-set-sdlc-sources-from-properties" doc:id="9ff8b920-58f8-4708-968c-06d10145178a" >
 		<ee:transform doc:name="Set SDLC Details" doc:id="1f452e73-be94-40a3-a5ea-72816e6a755d" >
 			<ee:message >
 			</ee:message>
 			<ee:variables >
 				<ee:set-variable resource="dw/common/set-sdlc-details-from-props-var.dwl" variableName="sdlcDetails" />
+			</ee:variables>
+		</ee:transform>
+	</flow>
+	<flow name="common-set-sdlc-sources-from-query-params" doc:id="08c27129-203f-482b-8beb-70519a1a049c" >
+		<ee:transform doc:name="Set SDLC Details" doc:id="266d33f1-2525-4f9d-9a87-b77b09c55a04" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable resource="dw/common/set-sdlc-details-from-query-params-var.dwl" variableName="sdlcDetails" />
 			</ee:variables>
 		</ee:transform>
 	</flow>

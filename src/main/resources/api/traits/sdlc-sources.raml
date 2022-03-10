@@ -1,0 +1,17 @@
+#%RAML 1.0 Trait
+queryParameters:
+  sources:
+    description: | 
+                Comma separated set of data sources for SDLC metrics that should be queried. Possible values are:
+                  - jira: Jira for work item management
+                  - bitbucket: For BitBucket code repositories 
+                  - confluence: For Confluence documentation 
+                  - jenkins: For Jenkins build pipelines 
+                  - adBoards: Azure DevOps Boards for work item management 
+                  - adRepos: Azure DevOps Repos for Azure hosted code repositories 
+                  - adPipelines: Azure DevOps Pipelines for build pipelines 
+                  - splunk: For Splunk dashboards
+    default: all    
+    required: false
+    type: string
+    pattern: ^all|([jira|bitbucket|confluence|jenkins|adBoards|adRepos|adPipelines|splunk]+([,[jira|bitbucket|confluence|jenkins|adBoards|adRepos|adPipelines|splunk]])*)$  

@@ -7,7 +7,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
 	<flow name="collector-azuredevops-boards-metrics-flow" doc:id="e7f9ddfd-fc85-4249-88a9-cec4e5265bba" >
 	    <choice doc:name="AzureDevOps Boards metrics enabled" doc:id="f8731cff-32d1-45fb-9636-88435487894a" >
-	      <when expression='#[vars.sdlcDetails.azuredevops.boards.enabled == "true"]'>
+	      <when expression='#[vars.sdlcDetails.azuredevops.boards.enabled as Boolean]'>
 	        <logger level="DEBUG" doc:name="Debug - Azure DevOps Boards Collector enabled" doc:id="2c5e274e-0f09-4794-a0d8-8253cefc01d8" message="Azure DevOps Boards Collector enabled"/>
 				<scatter-gather doc:name="Scatter-Gather" doc:id="a2b75362-64f5-40cd-8db2-1e9b68d0c43d" >
 					<route >
@@ -41,7 +41,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 	  </flow>
 	  <flow name="collector-azuredevops-repos-metrics-flow" doc:id="f06ce909-8b53-4806-b260-cf3d854fe932" >
 	    <choice doc:name="AzureDevOps Repos metrics enabled" doc:id="aeae782c-c027-45ac-987c-53a9a7bd4b16" >
-	      <when expression='#[vars.sdlcDetails.azuredevops.repos.enabled == "true"]'>
+	      <when expression='#[vars.sdlcDetails.azuredevops.repos.enabled as Boolean]'>
 	        <logger level="DEBUG" doc:name="Debug - Azure DevOps Repos Collector enabled" doc:id="7d05ac75-1495-4a1e-ae43-46fbe752c395" message="Azure DevOps Repos Collector enabled"/>
 				<flow-ref doc:name="get-azure-devops-repos" doc:id="84df21c1-b6fd-4535-89d0-ee9d8bd1085a" name="get-azure-devops-repos" />
 	      </when>
@@ -53,7 +53,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 	  </flow>
 	  <flow name="collector-azuredevops-pipelines-metrics-flow" doc:id="0b45fe6f-daa4-4fbb-8fb7-723203c20321" >
 	    <choice doc:name="AzureDevOps Pipelines metrics enabled" doc:id="d54c06f6-7ff1-4062-9844-9c292a7c58ef" >
-	      <when expression='#[vars.sdlcDetails.azuredevops.pipelines.enabled == "true"]'>
+	      <when expression='#[vars.sdlcDetails.azuredevops.pipelines.enabled as Boolean]'>
 	        <logger level="DEBUG" doc:name="Debug - Azure DevOps Pipelines Collector enabled" doc:id="324ee89b-bfcc-4b04-97d4-301094852376" message="Azure DevOps Pipelines Collector enabled"/>
 				<flow-ref doc:name="get-azure-devops-builds" doc:id="fecb0b5b-6fb2-43d0-8a9b-8a531ce617e7" name="get-azure-devops-builds" />
 	      </when>
