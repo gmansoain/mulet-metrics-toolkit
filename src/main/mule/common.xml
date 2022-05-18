@@ -95,15 +95,30 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 			</ee:message>
 			<ee:variables >
 				<ee:set-variable resource="dw/common/set-sdlc-details-from-props-var.dwl" variableName="sdlcDetails" />
+				<!-- <ee:set-variable resource="dw/common/set-loader-details-from-props-var.dwl" variableName="loaderDetails" /> -->
 			</ee:variables>
 		</ee:transform>
 	</flow>
-	<flow name="common-set-sdlc-sources-from-query-params" doc:id="08c27129-203f-482b-8beb-70519a1a049c" >
+<flow name="common-set-sdlc-sources-from-query-params" doc:id="08c27129-203f-482b-8beb-70519a1a049c" >
+        <set-variable value="#[attributes.queryParams.summary ~= true]" doc:name="Set Summary View" doc:id="767acb97-ac0c-4313-a581-74badad8cd00" variableName="summaryView" />
 		<ee:transform doc:name="Set SDLC Details" doc:id="266d33f1-2525-4f9d-9a87-b77b09c55a04" >
 			<ee:message >
 			</ee:message>
 			<ee:variables >
 				<ee:set-variable resource="dw/common/set-sdlc-details-from-query-params-var.dwl" variableName="sdlcDetails" />
+				<ee:set-variable resource="dw/common/set-raw-data-from-query-params-var.dwl" variableName="rawData" />
+			</ee:variables>
+		</ee:transform>
+	</flow>
+	<flow name="common-set-sdlc-sources-vars-from-payload" doc:id="3967eb2d-398a-464d-93c6-6194b89c1d2f">
+		<set-variable value="#[payload.summary default false]" doc:name="Set Summary View" doc:id="27a5b8f2-bb33-4bdb-b213-31fdb78a8a25" variableName="summaryView" />
+		<ee:transform doc:name="Set Loader Vars from Payload" doc:id="86f9654b-3524-45de-b0ea-8ad7eb1b379f" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable resource="dw/common/set-loader-details-from-payload-var.dwl" variableName="loaderDetails" />
+				<ee:set-variable resource="dw/common/set-raw-data-from-loader-details-payload-var.dwl" variableName="rawData" />	
+				<ee:set-variable resource="dw/common/set-sdlc-details-from-payload-var.dwl" variableName="sdlcDetails" />		
 			</ee:variables>
 		</ee:transform>
 	</flow>

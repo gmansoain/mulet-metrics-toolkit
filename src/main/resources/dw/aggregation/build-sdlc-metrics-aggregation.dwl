@@ -87,12 +87,12 @@ fun sumMetrics(metrics) =
                 Bug: sumMetrics([jiraMetrics.workItemsInSprintByType.Bug, azuredevopsBoardsMetrics.workItemsInSprintByType.Bug]),
                 Epic: sumMetrics([jiraMetrics.workItemsInSprintByType.Epic, azuredevopsBoardsMetrics.workItemsInSprintByType.Epic]),
                 Issue: sumMetrics([jiraMetrics.workItemsInSprintByType.Issue, azuredevopsBoardsMetrics.workItemsInSprintByType.Issue]),
-                Story: sumMetrics([jiraMetrics.workItemsInSprintByType.Story, azuredevopsBoardsMetrics.workItemsInSprintByType.Story])
+                Story: sumMetrics([jiraMetrics.workItemsInSprintByType.Story, azuredevopsBoardsMetrics.workItemsInSprintByType."User Story"])
             },	
 			workItemsInSprintByStatus: {
                 "In Progress": sumMetrics([jiraMetrics.workItemsInSprintByStatus."In Progress", azuredevopsBoardsMetrics.workItemsInSprintByStatus."Doing"]),
                 "To Do": sumMetrics([jiraMetrics.workItemsInSprintByStatus."To Do", azuredevopsBoardsMetrics.workItemsInSprintByStatus."To Do"]),
-                "Done": sumMetrics([jiraMetrics.workItemsInSprintByStatus."Done", azuredevopsBoardsMetrics.workItemsInSprintByStatus."Done"])
+                "Done": sumMetrics([jiraMetrics.workItemsInSprintByStatus."Done", azuredevopsBoardsMetrics.workItemsInSprintByStatus."Closed",azuredevopsBoardsMetrics.workItemsInSprintByStatus."Resolved"])
             }  
 			
 		},

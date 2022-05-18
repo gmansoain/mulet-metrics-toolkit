@@ -21,31 +21,33 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 		
 	</flow>
 	<flow name="poller-main-flow" doc:id="064decf2-07b4-4c90-9021-fa3886f4251e" >
-		<choice doc:name="Choice" doc:id="63baf667-d196-41d3-a67d-06df1dbc9f52" >
-			<when expression='#[vars.pollerDetails.generalPollerEnabled == "true"]'>
-				<flow-ref doc:name="Set Auth Vars from Properties Flow Reference" doc:id="596e18f8-877c-4fb3-91f0-53df0a411bee" name="common-set-auth-vars-from-properties" />
-				<flow-ref doc:name="Set API Manager Properties Flow Reference" doc:id="5d08a2e8-cee5-4dbd-afbc-6d9b5970ae86" name="common-set-collector-vars-from-properties-api-manager" />
-				<flow-ref doc:name="Set Loader Details From Properties Flow Reference" doc:id="0e8dba24-5164-4f28-aefe-6f3f609d2e77" name="common-set-loader-vars-from-properties" />
-				<scatter-gather doc:name="Scatter-Gather" doc:id="60e64dc9-861d-45b6-9fc4-cba76e36e651" >
-					<route >
-						<flow-ref doc:name="Loader Router Platform Flow Reference" doc:id="37716978-fcc0-47d3-98f7-8256faa5faf3" name="loader-router-flow" />
-					</route>
-					<route >
-						<choice doc:name="Choice" doc:id="9361572d-0756-4d9c-80fe-d5d0fc776a3f" >
-							<when expression='#[vars.pollerDetails.sdlcPollerEnabled == "true"]'>
-								<flow-ref doc:name="Set SDLC Details" doc:id="57ddfa2b-2d37-4598-958e-753d11d9dbd6" name="common-set-sdlc-details"/>
-								<flow-ref doc:name="Loader Router SDLC Flow Reference" doc:id="a82cb6c4-5b15-4b32-8ce4-29ad5c9d2544" name="loader-sdlc-router-flow" />
-							</when>
-							<otherwise >
-								<logger level="INFO" doc:name="Logger" doc:id="866ae385-b0dc-4901-bd53-b0a77e7db20a" message="SDLC Poller disabled"/>
-							</otherwise>
-						</choice>
-					</route>
-				</scatter-gather>
-			</when>
-			<otherwise >
-				<logger level="INFO" doc:name="Logger" doc:id="2153c3c6-6089-48bb-89c3-be5bec3eae65" message="Main Poller disabled"/>
-			</otherwise>
-		</choice>
+		<scatter-gather doc:name="Scatter-Gather" doc:id="60e64dc9-861d-45b6-9fc4-cba76e36e651">
+			<route >
+				<choice doc:name="Choice - Platform Metrics enabled" doc:id="63baf667-d196-41d3-a67d-06df1dbc9f52">
+					<when expression='#[vars.pollerDetails.generalPollerEnabled == "true"]'>
+						<flow-ref doc:name="Set Auth Vars from Properties Flow Reference" doc:id="596e18f8-877c-4fb3-91f0-53df0a411bee" name="common-set-auth-vars-from-properties" />
+						<flow-ref doc:name="Set API Manager Properties Flow Reference" doc:id="5d08a2e8-cee5-4dbd-afbc-6d9b5970ae86" name="common-set-collector-vars-from-properties-api-manager" />
+						<flow-ref doc:name="Set Loader Details From Properties Flow Reference" doc:id="0e8dba24-5164-4f28-aefe-6f3f609d2e77" name="common-set-loader-vars-from-properties" />
+								<flow-ref doc:name="Loader Router Platform Flow Reference" doc:id="37716978-fcc0-47d3-98f7-8256faa5faf3" name="loader-router-flow" />
+					</when>
+					<otherwise>
+						<logger level="INFO" doc:name="Logger" doc:id="2153c3c6-6089-48bb-89c3-be5bec3eae65" message="Main Poller disabled" />
+					</otherwise>
+				</choice>
+			</route>
+			<route>
+				<choice doc:name="Choice - SDLC Enabled" doc:id="7a531c53-6f08-47a2-b98f-9d1cb6a9ebb6">
+					<when expression='#[vars.pollerDetails.sdlcPollerEnabled == "true"]'>
+						<set-variable value="#[false]" doc:name="Set Raw Data flag" doc:id="486b5d75-148b-47bb-b743-aa8c7887f108" variableName="rawData" />
+        <set-variable value="#[false]" doc:name="Set Summary View" doc:id="8cfc7a34-5aee-441c-8a5c-995c33255868" variableName="summaryView"/>
+		<flow-ref doc:name="Set SDLC Details from Properties" doc:id="d61f0e45-325c-436e-a62d-e81fc874a000" name="common-set-sdlc-sources-from-properties" />
+						<flow-ref doc:name="Loader Router SDLC Flow Reference" doc:id="3435b29a-3bf7-4d0b-a687-ee37846c3e9f" name="loader-sdlc-router-flow" />
+					</when>
+					<otherwise>
+						<logger level="INFO" doc:name="Logger" doc:id="f4e096fe-b8ef-4a09-b051-df395a56e61f" message="SDLC Poller disabled" />
+					</otherwise>					
+				</choice>
+			</route>
+		</scatter-gather>
 	</flow>
 </mule>

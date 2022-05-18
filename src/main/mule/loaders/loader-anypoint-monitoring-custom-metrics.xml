@@ -359,7 +359,6 @@ http://www.mulesoft.org/schema/mule/custom-metrics http://www.mulesoft.org/schem
 		<foreach doc:name="For Each" doc:id="9ef07e6e-3eb4-42f4-8983-5c7024afbe3d" >
 			<custom-metrics:send doc:name="Send Custom Metric" doc:id="ac232fbb-c478-4fdb-8aa0-a4d5dc323956" metricName="platform_benefits_custom_metric">
 				<custom-metrics:dimensions>
-					<custom-metrics:dimension dimensionName="businessGroup" value="#[payload.businessGroup]" />
 				</custom-metrics:dimensions>
 				<custom-metrics:facts>
 					<custom-metrics:fact factName="developerProductivity" value="#[payload.developerProductivity]" />
@@ -371,6 +370,88 @@ http://www.mulesoft.org/schema/mule/custom-metrics http://www.mulesoft.org/schem
 			</custom-metrics:send>
 		</foreach>
 		<ee:transform doc:name="Build Loader Response" doc:id="432b8c96-eac9-4412-a341-1d9e4092fb14" >
+			<ee:message >
+				<ee:set-payload resource="dw/loader/loader-success-response.dwl" />
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="loader-sdlc-anypoint-monitoring" doc:id="1933e539-6d69-4fee-b28e-dbfcbdcfaa2e" >
+		<flow-ref doc:name="Aggregate SDLC Flow Reference" doc:id="09d28ce5-5398-4a65-bcdc-86ee989901f2" name="aggregator-sdlc-metrics-main-flow"/>
+		<set-variable value="#[payload]" doc:name="Set Event Variable" doc:id="0e947f84-03fe-440e-8725-65226f8e083b" variableName="event" />
+		<scatter-gather doc:name="Scatter-Gather" doc:id="701fdf38-708d-46c8-abce-2d7163baa847" >
+			<route >
+				<custom-metrics:send doc:name="Send Custom Metric - Summary" doc:id="edcaa5dd-7cf8-4cc8-b24b-24a3d6d7751f" metricName="sdlc_custom_metric">
+			<custom-metrics:dimensions>
+				<custom-metrics:dimension dimensionName="sdlcView" value="summary" />
+			</custom-metrics:dimensions>
+			<custom-metrics:facts>
+				<custom-metrics:fact factName="documentationTotalPages" value="#[payload.sdlcMetrics.documentation.totalPages]" />
+				<custom-metrics:fact factName="documentationPagesCreatedLast30Days" value="#[payload.sdlcMetrics.documentation.pagesCreatedInLast30Days]" />
+				<custom-metrics:fact factName="documentationPagesUpdatedLast30Days" value="#[payload.sdlcMetrics.documentation.pagesUpdatedInLast30Days]" />
+				<custom-metrics:fact factName="codeRepositoriesTotal" value="#[payload.sdlcMetrics.codeRepositories.totalRepositories]" />
+				<custom-metrics:fact factName="buildJobsTotal" value="#[payload.sdlcMetrics.buildJobs.totalJobs]" />
+				<custom-metrics:fact factName="buildJobsSuccessful" value="#[payload.sdlcMetrics.buildJobs.totalSuccessfulJobs]" />
+				<custom-metrics:fact factName="buildJobsFailed" value="#[payload.sdlcMetrics.buildJobs.totalFailedJobs]" />
+				<custom-metrics:fact factName="buildJobsUnexecuted" value="#[payload.sdlcMetrics.buildJobs.totalUnexecutedJobs]" />
+			</custom-metrics:facts>
+		</custom-metrics:send>
+			</route>
+			<route >
+				<custom-metrics:send doc:name="Send Custom Metric - WorkItems Summary" doc:id="73bd9d7b-d9b5-42a3-afcc-2c9c032f9d12" metricName="sdlc_workitems_custom_metric">
+			<custom-metrics:dimensions>
+				<custom-metrics:dimension dimensionName="sdlcView" value="summary" />
+			</custom-metrics:dimensions>
+			<custom-metrics:facts>
+				<custom-metrics:fact factName="workItemsTotalInBacklog" value="#[payload.sdlcMetrics.workItems.workItemsInBacklog]" />
+				<custom-metrics:fact factName="workItemsTotalInSprint" value="#[payload.sdlcMetrics.workItems.workItemsInSprint]" />
+				<custom-metrics:fact factName="workItemsTasksInSprint" value="#[payload.sdlcMetrics.workItems.workItemsInSprintByType.Task]" />
+				<custom-metrics:fact factName="workItemsBugsInSprint" value="#[payload.sdlcMetrics.workItems.workItemsInSprintByType.Bug]" />
+				<custom-metrics:fact factName="workItemsEpicsInSprint" value="#[payload.sdlcMetrics.workItems.workItemsInSprintByType.Epic]" />
+				<custom-metrics:fact factName="workItemsIssuesInSprint" value="#[payload.sdlcMetrics.workItems.workItemsInSprintByType.Issue]" />
+				<custom-metrics:fact factName="workItemsStoriesInSprint" value="#[payload.sdlcMetrics.workItems.workItemsInSprintByType.Story]" />
+				<custom-metrics:fact factName="workItemsInProgressInSprint" value="#[payload.sdlcMetrics.workItems.workItemsInSprintByStatus.'In Progress']" />
+				<custom-metrics:fact factName="workItemsToDoInSprint" value="#[payload.sdlcMetrics.workItems.workItemsInSprintByStatus.'To Do']" />
+				<custom-metrics:fact factName="workItemsDoneInSprint" value="#[payload.sdlcMetrics.workItems.workItemsInSprintByStatus.'Done']" />
+			</custom-metrics:facts>
+		</custom-metrics:send>
+			</route>
+			<route >
+				<custom-metrics:send doc:name="Send Custom Metric - Jira" doc:id="40c29d90-dbfa-4999-b863-4827ddb8bd6a" metricName="sdlc_jira_custom_metric">
+					<custom-metrics:dimensions>
+						<custom-metrics:dimension dimensionName="sdlcView" value="system_specific" />
+					</custom-metrics:dimensions>
+					<custom-metrics:facts>
+						<custom-metrics:fact factName="jiraItemsTotalInBacklog" value="#[payload.sdlcMetrics.jiraMetrics.workItemsInBacklog]" />
+						<custom-metrics:fact factName="jiraItemsTotalInSprint" value="#[payload.sdlcMetrics.jiraMetrics.workItemsInSprint]" />
+						<custom-metrics:fact factName="jiraTasksInSprint" value="#[payload.sdlcMetrics.jiraMetrics.workItemsInSprintByType.Task]" />
+						<custom-metrics:fact factName="jiraBugsInSprint" value="#[payload.sdlcMetrics.jiraMetrics.workItemsInSprintByType.Bug]" />
+						<custom-metrics:fact factName="jiraStoriesInSprint" value="#[payload.sdlcMetrics.jiraMetrics.workItemsInSprintByType.Story]" />
+						<custom-metrics:fact factName="jiraItemsInProgressInSprint" value="#[payload.sdlcMetrics.jiraMetrics.workItemsInSprintByStatus.'In Progress']" />
+						<custom-metrics:fact factName="jiraItemsToDoInSprint" value="#[payload.sdlcMetrics.jiraMetrics.workItemsInSprintByStatus.'To Do']" />
+						<custom-metrics:fact factName="jiraItemsDoneInSprint" value="#[payload.sdlcMetrics.jiraMetrics.workItemsInSprintByStatus.'Done']" />
+					</custom-metrics:facts>
+				</custom-metrics:send>
+			</route>
+			<route >
+				<custom-metrics:send doc:name="Send Custom Metric - AD Boards" doc:id="e48f2d0d-6c74-47e5-902c-ce9ef9350043" metricName="sdlc_adboards_custom_metric">
+					<custom-metrics:dimensions>
+						<custom-metrics:dimension dimensionName="sdlcView" value="system_specific" />
+					</custom-metrics:dimensions>
+					<custom-metrics:facts>
+						<custom-metrics:fact factName="adBoardsItemsTotalInBacklog" value="#[payload.sdlcMetrics.azuredevopsBoardsMetrics.workItemsInBacklog]" />
+						<custom-metrics:fact factName="adBoardsItemsTotalInSprint" value="#[payload.sdlcMetrics.azuredevopsBoardsMetrics.workItemsInSprint]" />
+						<custom-metrics:fact factName="adBoardsTasksInSprint" value="#[payload.sdlcMetrics.azuredevopsBoardsMetrics.workItemsInSprintByType.Task]" />
+						<custom-metrics:fact factName="adBoardsBugsInSprint" value="#[payload.sdlcMetrics.azuredevopsBoardsMetrics.workItemsInSprintByType.Bug]" />
+						<custom-metrics:fact factName="adBoardsStoriesInSprint" value="#[payload.sdlcMetrics.azuredevopsBoardsMetrics.workItemsInSprintByType.'User Story']" />
+						<custom-metrics:fact factName="adBoardsItemsInProgressInSprint" value="#[payload.sdlcMetrics.azuredevopsBoardsMetrics.workItemsInSprintByStatus.'Active']" />
+						<custom-metrics:fact factName="adBoardsItemsToDoInSprint" value="#[payload.sdlcMetrics.azuredevopsBoardsMetrics.workItemsInSprintByStatus.'New']" />
+						<custom-metrics:fact factName="adBoardsItemsDoneInSprint" value="#[payload.sdlcMetrics.azuredevopsBoardsMetrics.workItemsInSprintByStatus.'Closed']" />
+					</custom-metrics:facts>
+				</custom-metrics:send>
+			</route>
+		</scatter-gather>
+		<logger level="INFO" doc:name="Logger" doc:id="300d81aa-d418-4390-810f-0a64803c328f" message='#["Metrics published to Anypoint Monitoring"]' />
+		<ee:transform doc:name="Build Loader Response" doc:id="a27e523f-98fd-4c34-8461-47e6e4564559" >
 			<ee:message >
 				<ee:set-payload resource="dw/loader/loader-success-response.dwl" />
 			</ee:message>

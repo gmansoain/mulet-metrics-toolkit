@@ -120,10 +120,11 @@ types:
        - allowFilterBySDLCDataSource
       displayName: SDLC Metrics Loader
       description: This endpoint allows to load SDLC metrics using one of the available strategies.  
+      body:
+        application/json:
+          type: common | splunk | tableau | elk
       responses:
-        501:
+        201:
           body:
             application/json:
-              type: !include data-types/loaders/responses/sdlc-metrics.raml
-
-            
+              type: common | splunk | tableau | elk

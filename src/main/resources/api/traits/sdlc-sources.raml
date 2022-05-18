@@ -9,9 +9,8 @@ queryParameters:
                   - jenkins: For Jenkins build pipelines 
                   - adBoards: Azure DevOps Boards for work item management 
                   - adRepos: Azure DevOps Repos for Azure hosted code repositories 
-                  - adPipelines: Azure DevOps Pipelines for build pipelines 
-                  - splunk: For Splunk dashboards
-    default: all    
+                  - adPipelines: Azure DevOps Pipelines for build pipelines
+                  - splunk: For Splunk dashboards     
     required: false
     type: string
     pattern: ^all|([jira|bitbucket|confluence|jenkins|adBoards|adRepos|adPipelines|splunk]+([,[jira|bitbucket|confluence|jenkins|adBoards|adRepos|adPipelines|splunk]])*)$  

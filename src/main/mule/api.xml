@@ -161,8 +161,7 @@ output application/java
         <flow-ref doc:name="Aggregator SDLC Flow Reference" doc:id="1dcfab3e-3016-4bed-8234-763027f4760a" name="aggregator-sdlc-metrics-main-flow" />
     </flow>
     <flow name="post:\sdlc-metrics\load:api-config">
-        <flow-ref doc:name="Set Loader Details From Payload Flow Reference" doc:id="5be122d9-d5e8-4059-b082-2eab2c5c4845" name="common-set-loader-vars-from-payload" />
-        <flow-ref doc:name="Set SDLC Details" doc:id="700186a4-a8b4-4fc4-bb36-34f80e0129d1" name="common-set-sdlc-sources-from-properties" />
+        <flow-ref doc:name="Set Loader Details From Payload Flow Reference" doc:id="5be122d9-d5e8-4059-b082-2eab2c5c4845" name="common-set-sdlc-sources-vars-from-payload" />
         <flow-ref doc:name="Loader SDLC Flow Reference" doc:id="c84138ab-9d1d-4edf-840e-12d9458584e4" name="loader-sdlc-router-flow" />
     </flow>
 </mule>

@@ -72,15 +72,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 		<logger level="INFO" doc:name="Logger" doc:id="f353e3d0-cf07-4f19-95ec-3880c57e2a24" message="Strategy: #[vars.loaderDetails.strategy]" />
 		<choice doc:name="Choice" doc:id="fecd31fc-8de2-495e-ac87-de8f3c7b4878" >
 			<when expression="#[vars.loaderDetails.strategy == 'am']" >
-				<logger level="WARN" doc:name="Logger" doc:id="d59e2709-6dcd-4228-91c9-01420b999e85" message="AM Loader for SDLC not implemented"/>
-				<ee:transform doc:name="Response" doc:id="8ca30650-f1aa-4a2e-8994-ad8b9dfcb44c" >
-					<ee:message >
-						<ee:set-payload resource="dw/sdlc/post-sdlc-metrics-not-implemented.dwl" />
-					</ee:message>
-					<ee:variables >
-						<ee:set-variable variableName="httpStatus" ><![CDATA[501]]></ee:set-variable>
-					</ee:variables>
-				</ee:transform>
+				<flow-ref doc:name="loader-sdlc-anypoint-monitoring" doc:id="c7df88a8-6dcb-4825-8f02-d26d23c0879e" name="loader-sdlc-anypoint-monitoring"/>
 			</when>
 			<when expression="#[vars.loaderDetails.strategy == 'splunk']" >
 				<logger level="WARN" doc:name="Logger" doc:id="18ad03f3-7703-4060-84cf-3cdb8b47e634" message="Splunk Loader for SDLC not implemented"/>
