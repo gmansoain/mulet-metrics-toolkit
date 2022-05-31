@@ -17,7 +17,7 @@ embedded.dashboard:
   enabled: "false"
 
 poller:
-  enabled: "false"
+  enabled: "true"
   frequency: 
     cron: "0 0 0 * * ? *" 
     #Sample for dev "0 17 * * * ? *" At second :00 of minute :17 of every hour
