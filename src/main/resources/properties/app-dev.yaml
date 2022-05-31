@@ -25,7 +25,7 @@ poller:
     #https://www.freeformatter.com/cron-expression-generator-quartz.html
     timezone: "GMT-3"
 auth:
-  mode: "platform-credentials" # valid options are: platform-credentials or connected-app-credentials
+  mode: "connected-app-credentials" # valid options are: platform-credentials or connected-app-credentials
   
 aggregation:
   raw: "false"
